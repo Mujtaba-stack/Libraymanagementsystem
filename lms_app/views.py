@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import Member,Category,Book,Author,Reservation,Barrow
-from .Serializers import MemberSerializer, CategorySerializer, BookSerializer, AuthorSerializer,ReservationSerializer,BarrowSerializer
+from .serializers import MemberSerializer, CategorySerializer, BookSerializer, AuthorSerializer,ReservationSerializer,BarrowSerializer
 
 
 # Create your views here.
@@ -51,4 +51,5 @@ class BarrowListCreateView(generics.ListCreateAPIView):
 class BarrowDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset=Barrow.objects.all()
     serializer_class=BarrowSerializer    
+
 
