@@ -1,67 +1,183 @@
-from django.shortcuts import render
-from rest_framework import generics
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 from .models import Member, Category, Book, Author, Reservation, Barrow
-from .serializers import MemberSerializer, CategorySerializer, BookSerializer, AuthorSerializer, ReservationSerializer, \
-    BarrowSerializer
+from .serializers import (
+    MemberSerializer, CategorySerializer, BookSerializer, 
+    AuthorSerializer, ReservationSerializer, BarrowSerializer
+)
 
+@api_view(['GET', 'POST'])
+def member_list_create(request):
+    if request.method == 'GET':
+        members = Member.objects.all()
+        serializer = MemberSerializer(members, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = MemberSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Create your views here.
+@api_view(['GET', 'PUT', 'DELETE'])
+def member_detail(request, id):
+    member = get_object_or_404(Member, id=id)
+    if request.method == 'GET':
+        serializer = MemberSerializer(member)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = MemberSerializer(member, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        member.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class MemberListCreateView(generics.ListCreateAPIView):
-    queryset = Member.objects.all()
-    serializer_class = MemberSerializer
+@api_view(['GET', 'POST'])
+def category_list_create(request):
+    if request.method == 'GET':
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def category_detail(request, id):
+    category = get_object_or_404(Category, id=id)
+    if request.method == 'GET':
+        serializer = CategorySerializer(category)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = CategorySerializer(category, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        category.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class MemberDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Member.objects.all()
-    serializer_class = MemberSerializer
+@api_view(['GET', 'POST'])
+def book_list_create(request):
+    if request.method == 'GET':
+        books = Book.objects.all()
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = BookSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def book_detail(request, id):
+    book = get_object_or_404(Book, id=id)
+    if request.method == 'GET':
+        serializer = BookSerializer(book)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = BookSerializer(book, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        book.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class CategoryListCreateView(generics.ListCreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+@api_view(['GET', 'POST'])
+def author_list_create(request):
+    if request.method == 'GET':
+        authors = Author.objects.all()
+        serializer = AuthorSerializer(authors, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = AuthorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def author_detail(request, id):
+    author = get_object_or_404(Author, id=id)
+    if request.method == 'GET':
+        serializer = AuthorSerializer(author)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = AuthorSerializer(author, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        author.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+@api_view(['GET', 'POST'])
+def barrow_list_create(request):
+    if request.method == 'GET':
+        barrows = Barrow.objects.all()
+        serializer = BarrowSerializer(barrows, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = BarrowSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def barrow_detail(request, id):
+    barrow = get_object_or_404(Barrow, id=id)
+    if request.method == 'GET':
+        serializer = BarrowSerializer(barrow)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = BarrowSerializer(barrow, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        barrow.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class BookListCreateView(generics.ListCreateAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
+@api_view(['GET', 'POST'])
+def reservation_list_create(request):
+    if request.method == 'GET':
+        reservations = Reservation.objects.all()
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = ReservationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-
-
-class AuthorListCreateView(generics.ListCreateAPIView):
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
-
-
-class AuthorDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
-
-
-class ReservationListCreateView(generics.ListCreateAPIView):
-    queryset = Reservation.objects.all()
-    serializer_class = ReservationSerializer
-
-
-class ReservationDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Author.objects.all()
-    serializer_class = ReservationSerializer
-
-
-class BarrowListCreateView(generics.ListCreateAPIView):
-    queryset = Barrow.objects.all()
-    serializer_class = BarrowSerializer
-
-
-class BarrowDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Barrow.objects.all()
-    serializer_class = BarrowSerializer
+@api_view(['GET', 'PUT', 'DELETE'])
+def reservation_detail(request, id):
+    reservation = get_object_or_404(Reservation, id=id)
+    if request.method == 'GET':
+        serializer = ReservationSerializer(reservation)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = ReservationSerializer(reservation, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        reservation.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
