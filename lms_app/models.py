@@ -4,7 +4,7 @@ from datetime import timedelta, date
 # Create your models here.
 
 class Member(models.Model):
-    member_FullName = models.CharField(max_length=220)
+    member_full_name = models.CharField(max_length=220)
     member_Email = models.CharField(max_length=220)
     member_department = models.CharField(max_length=220)
     member_city = models.CharField(max_length=220)
@@ -13,7 +13,7 @@ class Member(models.Model):
     expeiry_date = models.DateField()
 
     def __str__(self):
-        return self.Member_FullName    
+        return self.member_full_name
 
 
 class Category(models.Model):
