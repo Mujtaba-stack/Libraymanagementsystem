@@ -5,7 +5,11 @@ from datetime import timedelta, date
 # Create your models here.
 
 class Member(models.Model):
+<<<<<<< Updated upstream
     member_full_name = models.CharField(max_length=220)
+=======
+    member_Full_Name = models.CharField(max_length=220)
+>>>>>>> Stashed changes
     member_Email = models.CharField(max_length=220)
     member_department = models.CharField(max_length=220)
     member_city = models.CharField(max_length=220)
@@ -14,7 +18,11 @@ class Member(models.Model):
     expiry_date = models.DateField()
 
     def __str__(self):
+<<<<<<< Updated upstream
         return self.member_full_name
+=======
+        return self.Member_Full_Name    
+>>>>>>> Stashed changes
 
 
 class Category(models.Model):
