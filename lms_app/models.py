@@ -18,10 +18,9 @@ class Member(models.Model):
 
 
 class Category(models.Model):
-    Category_name = models.CharField(max_length=220)
-
+    category_name = models.CharField(max_length=220, default="Fiction" , choices=[('Fiction','Fiction'),('Non-Fiction','Non-Fiction'),('Sci-Fic','Sci-Fic')])
     def __str__(self):
-        return self.Category_name
+        return self.category_name
 
 
 class Book(models.Model):
@@ -38,7 +37,8 @@ class Book(models.Model):
         super().save()
 
     def __str__(self):
-        return self.book_title
+        return {self.book_title} ({self.available_copies}/{self.total_copies})
+        
 
 
 class Author(models.Model):
