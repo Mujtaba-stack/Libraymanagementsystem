@@ -68,16 +68,20 @@ def category_detail(request, id):
 
 @api_view(['GET', 'POST'])
 def book_list_create(request):
-    if request.method == 'GET':
-        books = Book.objects.all()
-        serializer = BookSerializer(books, many=True)
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        serializer = BookSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        if request.method == 'GET':
+            books = Book.objects.all()
+            serializer = BookSerializer(books, many=True)
+            return Response(serializer.data)
+        elif request.method == 'POST':
+            serializer = BookSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print("Exception: ", e)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def book_detail(request, id):
