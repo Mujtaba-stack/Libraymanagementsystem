@@ -5,7 +5,7 @@ from .views import (
     book_list_create, book_detail,
     author_list_create, author_detail,
     barrow_list_create, barrow_detail,
-    reservation_list_create, reservation_detail,
+    reservation_list_create, reservation_detail,search_lms,
 )
 
 urlpatterns = [
@@ -26,4 +26,6 @@ urlpatterns = [
 
     path('reservation/', reservation_list_create, name='reservation-list-create'),
     path('reservation/<int:id>/', reservation_detail, name='reservation-detail'),
+
+    path('search/', search_lms, name='search_lms_create'),
 ]

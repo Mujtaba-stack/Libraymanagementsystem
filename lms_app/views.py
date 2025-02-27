@@ -23,13 +23,13 @@ def member_list_create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def member_detail(request, id):
     member = get_object_or_404(Member, id=id)
     if request.method == 'GET':
         serializer = MemberSerializer(member)
         return Response(serializer.data)
-    elif request.method == 'PUT':
+    elif request.method == 'PATCH':
         serializer = MemberSerializer(member, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -58,7 +58,7 @@ def category_detail(request, id):
     if request.method == 'GET':
         serializer = CategorySerializer(category)
         return Response(serializer.data)
-    elif request.method == 'PUT':
+    elif request.method == 'PATCH':
         serializer = CategorySerializer(category, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -97,7 +97,7 @@ def book_list_create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def book_detail(request, id):
     book = get_object_or_404(Book, id=id)
     if request.method == 'GET':
@@ -126,13 +126,13 @@ def author_list_create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def author_detail(request, id):
     author = get_object_or_404(Author, id=id)
     if request.method == 'GET':
         serializer = AuthorSerializer(author)
         return Response(serializer.data)
-    elif request.method == 'PUT':
+    elif request.method == 'PATCH':
         serializer = AuthorSerializer(author, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -155,13 +155,13 @@ def barrow_list_create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def barrow_detail(request, id):
     barrow = get_object_or_404(Barrow, id=id)
     if request.method == 'GET':
         serializer = BarrowSerializer(barrow)
         return Response(serializer.data)
-    elif request.method == 'PUT':
+    elif request.method == 'PATCH':
         serializer = BarrowSerializer(barrow, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -184,13 +184,13 @@ def reservation_list_create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def reservation_detail(request, id):
     reservation = get_object_or_404(Reservation, id=id)
     if request.method == 'GET':
         serializer = ReservationSerializer(reservation)
         return Response(serializer.data)
-    elif request.method == 'PUT':
+    elif request.method == 'PATCH':
         serializer = ReservationSerializer(reservation, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -199,24 +199,6 @@ def reservation_detail(request, id):
     elif request.method == 'DELETE':
         reservation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-api_view(['GET'])
-def search_lms(request):
-    query = request.Get.get('query','')
-    books=Book.objects.filter(Q(book_title_icontain=query)|Q(isbn_icontain=query))
-    members=Member.objects.filter(Q(member_full_name_icontain=query)|Q(member_Email_icontain=query)|Q(member_department_icontain=query)|Q(member_city_icontain=query)|Q(memeber_age_icontain=query))
-    categorys=Category.objects.filter(Q(category_name_icontain=query))
-    authors=Author.objects.filter(Q(author_name_icontain=query))
-    reservations=Reservation.filter(Q(status_icontain=query))
-    
-    response = {
-       "books": BookSerializer(books).data,
-       "members":MemberSerializer(members).data,
-       "categorys":CategorySerializer(categorys).data,
-       "authors":AuthorSerializer(authors).data,
-       "reservations":ReservationSerializer(reservations).data
-   } 
-    return Response(response)
 
 
 
@@ -234,13 +216,13 @@ def barrow_list_create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def barrow_detail(request, id):
     barrow = get_object_or_404(Barrow, id=id)
     if request.method == 'GET':
         serializer = BarrowSerializer(barrow)
         return Response(serializer.data)
-    elif request.method == 'PUT':
+    elif request.method == 'PATCH':
         serializer = BarrowSerializer(barrow, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -263,13 +245,13 @@ def reservation_list_create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def reservation_detail(request, id):
     reservation = get_object_or_404(Reservation, id=id)
     if request.method == 'GET':
         serializer = ReservationSerializer(reservation)
         return Response(serializer.data)
-    elif request.method == 'PUT':
+    elif request.method == 'PATCH':
         serializer = ReservationSerializer(reservation, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -278,3 +260,21 @@ def reservation_detail(request, id):
     elif request.method == 'DELETE':
         reservation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+api_view(['GET'])
+def search_lms(request):
+    query = request.GET.get('query', '')
+    books=Book.objects.filter(Q(book_title_icontain=query)|Q(isbn_icontain=query))
+    members=Member.objects.filter(Q(member_full_name_icontain=query)|Q(member_Email_icontain=query)|Q(member_department_icontain=query)|Q(member_city_icontain=query)|Q(memeber_age_icontain=query))
+    categories=Category.objects.filter(Q(category_name_icontain=query))
+    authors=Author.objects.filter(Q(author_name_icontain=query))
+    reservations=Reservation.objects.filter(Q(status_icontain=query))
+    
+    response = {
+       "books": BookSerializer(books).data,
+       "members":MemberSerializer(members).data,
+       "categories":CategorySerializer(categories).data,
+       "authors":AuthorSerializer(authors).data,
+       "reservations":ReservationSerializer(reservations).data
+   } 
+    return Response(response)

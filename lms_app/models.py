@@ -15,7 +15,7 @@ class Member(models.Model):
     expeiry_date = models.DateField()
 
     def __str__(self):
-        return self.Member_Full_Name    
+        return self.member_Full_Name    
 
 
 
@@ -23,7 +23,6 @@ class Category(models.Model):
     category_name = models.CharField(max_length=220, default="Fiction" , choices=[('Fiction','Fiction'),('Non-Fiction','Non-Fiction'),('Sci-Fic','Sci-Fic')])
     def __str__(self):
         return self.category_name
-
 
 class Book(models.Model):
     book_id = models.AutoField(primary_key=True)
@@ -33,13 +32,16 @@ class Book(models.Model):
     total_copies = models.IntegerField(null=True, blank=True)
     available_copies = models.IntegerField(default=1)
 
-    def save(self):
-        if self.available_copies > self.total_copies:
-            self.available_copies = self.total_copies
-        super().save()
+    def save(self, *args, **kwargs):
+        try:
+            if self.available_copies > self.total_copies:
+                self.available_copies = self.total_copies
+            super().save(*args, **kwargs)
+        except Exception as e:
+            print(f"Error saving book: {e}")
 
     def __str__(self):
-        return {self.book_title} ({self.available_copies}/{self.total_copies})
+        return f"{self.book_title} ({self.available_copies}/{self.total_copies})"
         
 
 
@@ -50,17 +52,6 @@ class Author(models.Model):
     def __str__(self):
         return self.author_name
 
-class Member(models.Model):
-    member_full_name = models.CharField(max_length=220)
-    member_Email = models.CharField(max_length=220)
-    member_department = models.CharField(max_length=220)
-    member_city = models.CharField(max_length=220)
-    member_age = models.IntegerField()
-    membership_type = models.CharField(max_length=100, choices=[('Free', 'Free'), ('Premium', 'Premium')])
-    expiry_date = models.DateField()
-    borrowed_books = models.ManyToManyField('Book', blank=True)
-    def __str__(self):
-        return self.member_full_name
 
 class Barrow(models.Model):
     barrow_date = models.DateField(default=date.today() + timedelta(days=14))
