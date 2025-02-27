@@ -17,13 +17,13 @@ class Book(models.Model):
     total_copies = models.IntegerField(null=True, blank=True)
     available_copies = models.IntegerField(default=1)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.available_copies > self.total_copies:
             self.available_copies = self.total_copies
         super().save()
 
     def __str__(self):
-        return {self.book_title} ({self.available_copies}/{self.total_copies})
+        return f"{self.book_title} ({self.available_copies}/{self.total_copies})"
         
 
 
@@ -52,7 +52,7 @@ class Barrow(models.Model):
     fine_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
-        return f"Barrowed on {self.barrow_date}, Returned: {self.returned_date}"
+        return f"Borrowed on {self.barrow_date}, Returned: {self.returned_date}"
 
 
 class Reservation(models.Model):
@@ -62,7 +62,7 @@ class Reservation(models.Model):
     status = models.CharField(max_length=50, choices=[('pending', 'Pending'), ('complete', 'Complete')])
 
     def __str__(self):
-        return f"{self.Member.member_full_name} reserved {self.Book.book_title} - {self.status}"
+        return f"{self.member.member_full_name} reserved {self.book.book_title} - {self.status}"
 
 
 
