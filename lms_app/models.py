@@ -56,12 +56,14 @@ class Barrow(models.Model):
 
 
 class Reservation(models.Model):
-    Member = models.ForeignKey(Member, on_delete=models.CASCADE)
-    Book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
     reversed_date = models.DateField()
     status = models.CharField(max_length=50, choices=[('pending', 'Pending'), ('complete', 'Complete')])
 
     def __str__(self):
         return f"{self.Member.member_full_name} reserved {self.Book.book_title} - {self.status}"
+
+
 
 

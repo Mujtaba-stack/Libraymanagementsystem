@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.db.models import Q
 from rest_framework import status
 from .models import Member, Category, Book, Author, Reservation, Barrow
 from .serializers import (
@@ -185,3 +186,25 @@ def reservation_detail(request, id):
     elif request.method == 'DELETE':
         reservation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+api_view(['GET'])
+def search_lms(request):
+    query = request.Get.get('query','')
+    books=Book.objects.filter(Q(book_title_icontain=query)|Q(isbn_icontain=query))
+    members=Member.objects.filter(Q(member_full_name_icontain=query)|Q(member_Email_icontain=query)|Q(member_department_icontain=query)|Q(member_city_icontain=query)|Q(memeber_age_icontain=query))
+    categorys=Category.objects.filter(Q(category_name_icontain=query))
+    authors=Author.objects.filter(Q(author_name_icontain=query))
+    reservations=Reservation.filter(Q(status_icontain=query))
+    
+    response = {
+       "books": BookSerializer(books).data,
+       "members":MemberSerializer(members).data,
+       "categorys":CategorySerializer(categorys).data,
+       "authors":AuthorSerializer(authors).data,
+       "reservations":ReservationSerializer(reservations).data
+   } 
+    return Response(response)
+
+
+
+
