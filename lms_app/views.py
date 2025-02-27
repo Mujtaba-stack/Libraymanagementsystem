@@ -1,10 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-<<<<<<< Updated upstream
+
 from django.db.models import Q
-=======
->>>>>>> Stashed changes
 from rest_framework import status
 from .models import Member, Category, Book, Author, Reservation, Barrow
 from .serializers import (
@@ -72,7 +70,7 @@ def category_detail(request, id):
 
 @api_view(['GET', 'POST'])
 def book_list_create(request):
-<<<<<<< Updated upstream
+
     try:
         if request.method == 'GET':
             books = Book.objects.all()
@@ -87,7 +85,7 @@ def book_list_create(request):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print("Exception: ", e)
-=======
+
     if request.method == 'GET':
         books = Book.objects.all()
         serializer = BookSerializer(books, many=True)
@@ -98,7 +96,6 @@ def book_list_create(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
->>>>>>> Stashed changes
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def book_detail(request, id):
@@ -144,8 +141,7 @@ def author_detail(request, id):
     elif request.method == 'DELETE':
         author.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-<<<<<<< Updated upstream
-
+    
 @api_view(['GET', 'POST'])
 def barrow_list_create(request):
     if request.method == 'GET':
@@ -223,8 +219,7 @@ def search_lms(request):
     return Response(response)
 
 
-=======
->>>>>>> Stashed changes
+
 
 @api_view(['GET', 'POST'])
 def barrow_list_create(request):

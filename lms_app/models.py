@@ -3,8 +3,7 @@ from datetime import timedelta, date
 
 
 # Create your models here.
-<<<<<<< Updated upstream
-=======
+
 
 class Member(models.Model):
     member_Full_Name = models.CharField(max_length=220)
@@ -19,7 +18,7 @@ class Member(models.Model):
         return self.Member_Full_Name    
 
 
->>>>>>> Stashed changes
+
 class Category(models.Model):
     category_name = models.CharField(max_length=220, default="Fiction" , choices=[('Fiction','Fiction'),('Non-Fiction','Non-Fiction'),('Sci-Fic','Sci-Fic')])
     def __str__(self):
