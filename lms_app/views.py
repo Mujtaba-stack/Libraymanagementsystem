@@ -261,20 +261,24 @@ def reservation_detail(request, id):
         reservation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-api_view(['GET'])
+
+@api_view(['GET'])
 def search_lms(request):
     query = request.GET.get('query', '')
-    books=Book.objects.filter(Q(book_title_icontain=query)|Q(isbn_icontain=query))
-    members=Member.objects.filter(Q(member_full_name_icontain=query)|Q(member_Email_icontain=query)|Q(member_department_icontain=query)|Q(member_city_icontain=query)|Q(memeber_age_icontain=query))
-    categories=Category.objects.filter(Q(category_name_icontain=query))
-    authors=Author.objects.filter(Q(author_name_icontain=query))
-    reservations=Reservation.objects.filter(Q(status_icontain=query))
-    
+
+    books = Book.objects.filter(Q(book_title__icontains=query) | Q(isbn__icontains=query))
+    members = Member.objects.filter(
+        Q(member_full_name__icontains=query) |Q(member_Email__icontains=query) |Q(member_department__icontains=query) |Q(member_city__icontains=query) |Q(member_age__icontains=query))
+    categories = Category.objects.filter(Q(category_name__icontains=query))
+    authors = Author.objects.filter(Q(author_name__icontains=query))
+    reservations = Reservation.objects.filter(Q(status__icontains=query))
+
     response = {
-       "books": BookSerializer(books).data,
-       "members":MemberSerializer(members).data,
-       "categories":CategorySerializer(categories).data,
-       "authors":AuthorSerializer(authors).data,
-       "reservations":ReservationSerializer(reservations).data
-   } 
-    return Response(response)
+        "books": BookSerializer(books, many=True).data,
+        "members": MemberSerializer(members, many=True).data,
+        "categories": CategorySerializer(categories, many=True).data,
+        "authors": AuthorSerializer(authors, many=True).data,
+        "reservations": ReservationSerializer(reservations, many=True).data
+    }
+    
+    return Response(response,status=status.HTTP_200_OK)
