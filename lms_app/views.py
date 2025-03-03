@@ -81,6 +81,7 @@ def book_list_create(request):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
     except Exception as e:
         print("Exception: ", e)
     if request.method == 'GET':
@@ -96,21 +97,61 @@ def book_list_create(request):
 
 @api_view(['GET', 'PATCH', 'DELETE'])
 def book_detail(request, id):
-    book = get_object_or_404(Book, id=id)
+    book = get_object_or_404(Book, book_id=id)
+
     if request.method == 'GET':
         serializer = BookSerializer(book)
         return Response(serializer.data)
+
     elif request.method == 'PATCH':
-        serializer = BookSerializer(book, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            if Book.book_status.is_Available():
-             book =Book.objects.filter("book_title").exists()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user_id = request.data.get("user_id")
+        current_operation = request.data.get("current_operation", "").lower()
+
+        if not user_id:
+            return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+
+        if current_operation == 'borrow':
+            if book.book_status == 'Available':
+                book.book_status = 'Borrowed'
+                book.borrowers.add(book_detail)
+                book.save()
+            else:
+                return Response({"error": "Book is not available for borrowing."}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif current_operation == 'reserve':
+            if book.book_status == 'Available':
+                book.book_status = 'Reserved'
+                book.borrowers.add(book_detail)
+                book.save()
+            else:
+                return Response({"error": "Book is not available for reservation."}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif current_operation == 'return':
+            if book in book.borrowers.all():
+                book.borrowers.remove(book_detail)
+
+                if not book.borrowers.exists():
+                    book.book_status = 'Available'
+
+                book.save()
+            else:
+                return Response({"error": "User has not borrowed this book."}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = BookSerializer(book)
+        return Response({
+            "message": f"Book status updated to {book.book_status}",
+            "updated_data": serializer.data
+        })
+
     elif request.method == 'DELETE':
         book.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
 
 @api_view(['GET', 'POST'])
 def author_list_create(request):
@@ -124,6 +165,7 @@ def author_list_create(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'PATCH', 'DELETE'])
 def author_detail(request, id):
@@ -159,3 +201,5 @@ def search_lms(request):
     }
     
     return Response(response,status=status.HTTP_200_OK)
+
+
