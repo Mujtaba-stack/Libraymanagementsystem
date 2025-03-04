@@ -28,3 +28,7 @@ class AuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = '__all__'
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559

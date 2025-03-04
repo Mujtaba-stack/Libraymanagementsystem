@@ -6,6 +6,11 @@ from django.utils import timezone
 class DateTimeMixin(models.Model):
     created = models.DateTimeField(default=timezone.now) 
     updated = models.DateTimeField(auto_now=True)
+<<<<<<< HEAD
+=======
+    
+
+>>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559
 
     class Meta:
         abstract=True
@@ -48,6 +53,10 @@ class Member(DateTimeMixin):
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559
 
 
 
