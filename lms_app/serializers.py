@@ -29,6 +29,9 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559
+=======
+>>>>>>> 6cfda09 (updated admin,models,serializers,urls)

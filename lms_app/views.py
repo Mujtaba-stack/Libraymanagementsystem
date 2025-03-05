@@ -81,7 +81,6 @@ def book_list_create(request):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
     except Exception as e:
         print("Exception: ", e)
     if request.method == 'GET':
@@ -94,98 +93,84 @@ def book_list_create(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+@api_view(['PATCH'])
+def book_detail(request):
+    if request.method == 'PATCH':
+        serializer = BookSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 @api_view(['PATCH'])
-def book_detail(request, id):
-    book = get_object_or_404(Book, book_id=id)
-<<<<<<< HEAD
-    member_id = request.data.get("member_id")
-    current_operation = request.data.get("current_operation", "").lower()
-    if not member_id:
-        return Response({"error": "Member ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-    member = get_object_or_404(Member, id=member_id)
-    if current_operation == "borrow":
-        if book.book_status == "Available":
-            book.book_status = "Borrowed"
-            member.books.add(book)  
-            book.save()
-            member.save()
-        else:
-            return Response({"error": "Book is not available for borrowing."}, status=status.HTTP_400_BAD_REQUEST)
-    elif current_operation == "reserve":
-        if book.book_status == "Available":
-            book.book_status = "Reserved"
-            member.books.add(book) 
-            book.save()
-            member.save()
-        else:
-            return Response({"error": "Book is not available for reservation."}, status=status.HTTP_400_BAD_REQUEST)
-    elif current_operation == "return":
-        if book in member.books.all():
-            member.books.remove(book)  
-            if not any(member.books.filter(id=book.book_id).exists() for member in Member.objects.all()):
-                book.book_status = "Available"
-            book.save()
-            member.save()
-        else:
-            return Response({"error": "This book was not borrowed by the member."}, status=status.HTTP_400_BAD_REQUEST)
+def book_status(request, book_id):  
+    try:
+        book = Book.objects.get(book_id=book_id)
+    except Book.DoesNotExist:
+        return Response({"error":"Book not found"},status=status.HTTP_404_NOT_FOUND)
+    data = request.data
+    if 'book_status' in data:
+        book.book_status = data['book_status']
+        book.save()
+        return Response({"error":"book status updated!", "book_status":book.book_status},status=status.HTTP_200_OK)
+    else:
+        return Response({"error":"book status field is required"},status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = BookSerializer(book)
-    return Response({"message": f"Book status updated to {book.book_status}", "updated_data": serializer.data})
+@api_view(['POST'])
+def book_borrow(request):
+    member_id = request.data.get('member_id')
+    book_id = request.data.get('book_id')
+    if not all([member_id, book_id]):
+        return Response({'error': 'Enter the valid info'}, status=status.HTTP_400_BAD_REQUEST)
+    member = get_object_or_404(Member, pk=member_id)
+    book = get_object_or_404(Book, pk=book_id)
+    if book.book_status != 'Available':
+        return Response({'error': 'Book is not available for borrow'}, status=status.HTTP_400_BAD_REQUEST)
+    book.member.add(member)
+    book.book_status = 'Borrow'
+    book.save()
+    return Response({'message': f'Book "{book.book_title}" is borrowed by {member.member_full_name}.'}, status=status.HTTP_200_OK)
 
-=======
+@api_view(['POST'])
+def book_reserve(request):
+    member_id = request.data.get('member_id')
+    book_id = request.data.get('book_id')
+    if not all([member_id, book_id]):
+        return Response({'error': 'Enter the valid info'}, status=status.HTTP_400_BAD_REQUEST)
+    member = get_object_or_404(Member, pk=member_id)
+    book = get_object_or_404(Book, pk=book_id)
+    if book.book_status != 'Available':
+        return Response({'error': 'Book is not available for reservation'}, status=status.HTTP_400_BAD_REQUEST)
+    if book.book_status == 'Reserved':
+        return Response({'error': 'This book is already reserved by another member.'}, status=status.HTTP_400_BAD_REQUEST)
+    book.book_status = 'Reserved'
+    book.save()
+    return Response({'message': f'Book "{book.book_title}" is reserved by {member.member_full_name}.'}, status=status.HTTP_200_OK)
 
-    if request.method == 'GET':
-        serializer = BookSerializer(book)
-        return Response(serializer.data)
 
-    elif request.method == 'PATCH':
-        user_id = request.data.get("user_id")
-        current_operation = request.data.get("current_operation", "").lower()
 
-        if not user_id:
-            return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def book_return(request):
+    member_id = request.data.get('member_id')
+    book_id = request.data.get('book_id')
+    if not all([member_id, book_id]):
+        return Response({'error': 'Enter the valid info'}, status=status.HTTP_400_BAD_REQUEST)
+    member = get_object_or_404(Member, pk=member_id)
+    book = get_object_or_404(Book, pk=book_id)
+    if member not in book.member.all():
+        return Response({'error': 'This book is not borrowed by the member.'}, status=status.HTTP_400_BAD_REQUEST)
+    book.member.remove(member)
+    book.book_status = 'Available'
+    book.save()  
+    return Response({'message': f'Book "{book.book_title}" is return by {member.member_full_name}.'}, status=status.HTTP_200_OK)
 
-        
 
-        if current_operation == 'borrow':
-            if book.book_status == 'Available':
-                book.book_status = 'Borrowed'
-                book.borrowers.add(book_detail)
-                book.save()
-            else:
-                return Response({"error": "Book is not available for borrowing."}, status=status.HTTP_400_BAD_REQUEST)
+    
 
-        elif current_operation == 'reserve':
-            if book.book_status == 'Available':
-                book.book_status = 'Reserved'
-                book.borrowers.add(book_detail)
-                book.save()
-            else:
-                return Response({"error": "Book is not available for reservation."}, status=status.HTTP_400_BAD_REQUEST)
-
-        elif current_operation == 'return':
-            if book in book.borrowers.all():
-                book.borrowers.remove(book_detail)
-
-                if not book.borrowers.exists():
-                    book.book_status = 'Available'
-
-                book.save()
-            else:
-                return Response({"error": "User has not borrowed this book."}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = BookSerializer(book)
-        return Response({
-            "message": f"Book status updated to {book.book_status}",
-            "updated_data": serializer.data
-        })
-
-    elif request.method == 'DELETE':
-        book.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
->>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559
+   
+    
+    
 
 
 
@@ -229,26 +214,13 @@ def search_lms(request):
     members = Member.objects.filter(Q(member_full_name__icontains=query) |Q(member_Email__icontains=query) |Q(member_department__icontains=query) |Q(member_city__icontains=query) |Q(member_age__icontains=query))
     categories = Category.objects.filter(Q(category_name__icontains=query))
     authors = Author.objects.filter(Q(author_name__icontains=query))
-<<<<<<< HEAD
-=======
 
->>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559
     response = {
         "books": BookSerializer(books, many=True).data,
         "members": MemberSerializer(members, many=True).data,
         "categories": CategorySerializer(categories, many=True).data,
-<<<<<<< HEAD
-        "authors": AuthorSerializer(authors, many=True).data,            
-=======
         "authors": AuthorSerializer(authors, many=True).data,
                 
->>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559
     }
     
-
     return Response(response,status=status.HTTP_200_OK)
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559

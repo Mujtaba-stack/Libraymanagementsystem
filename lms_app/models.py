@@ -6,11 +6,6 @@ from django.utils import timezone
 class DateTimeMixin(models.Model):
     created = models.DateTimeField(default=timezone.now) 
     updated = models.DateTimeField(auto_now=True)
-<<<<<<< HEAD
-=======
-    
-
->>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559
 
     class Meta:
         abstract=True
@@ -26,6 +21,7 @@ class Book(DateTimeMixin):
     book_title = models.CharField(max_length=220)
     isbn = models.CharField(max_length=20)
     description = models.TextField(default="")
+    member = models.ManyToManyField('Member', related_name='borrowed_books', blank=True)
     book_status = models.CharField(max_length=50, choices=[('Available', 'Available'), ('Reserved', 'Reserved'),('Borrowed', 'Borrowed')], default="Available")
     
 
@@ -38,13 +34,12 @@ class Author(DateTimeMixin):
 
 class Member(DateTimeMixin):
     member_full_name = models.CharField(max_length=220)
-    member_Email = models.CharField(max_length=220)
+    member_email = models.CharField(max_length=220)
     member_department = models.CharField(max_length=220)
     member_city = models.CharField(max_length=220)
     member_age = models.IntegerField()
-    membership_type = models.CharField(max_length=100, choices=[('Free', 'Free'), ('Premium', 'Premium')])
     expiry_date = models.DateField()
-    books = models.ManyToManyField('Book', blank=True)
+    books = models.ManyToManyField('Book', related_name='members', blank=True)
     def __str__(self):
         return self.member_full_name
 
@@ -53,10 +48,6 @@ class Member(DateTimeMixin):
 
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 26b10013c2dc8ed0cb923d862cbc87a630d9a559
 
 
 
